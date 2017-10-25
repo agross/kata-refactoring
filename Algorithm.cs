@@ -69,7 +69,7 @@ namespace Algorithm
       return answer;
     }
 
-    static IEnumerable<Pair> CalculateDurationsBetweenThings(List<Thing> things)
+    static IEnumerable<Pair> CalculateDurationsBetweenThings(IEnumerable<Thing> things)
     {
       return things.SelectMany((left, i) =>
       {
