@@ -34,21 +34,19 @@ namespace Algorithm
 
     public Pair Find(SearchType searchType)
     {
-      var durdations = CalculateDurationsBetweenThings(_list);
+      var durations = CalculateDurationsBetweenThings(_list);
 
-      if(durdations.Count < 1)
+      if(!durations.Any())
       {
         return new Pair();
       }
 
-      var answer = FindShortestOrLongestDuration(searchType, durdations);
-
-      return answer;
+      return FindShortestOrLongestDuration(searchType, durations);
     }
 
-    static Pair FindShortestOrLongestDuration(SearchType searchType, List<Pair> durdations)
+    static Pair FindShortestOrLongestDuration(SearchType searchType, IEnumerable<Pair> durdations)
     {
-      Pair answer = durdations[0];
+      Pair answer = durdations.First();
       foreach (var result in durdations)
       {
         switch (searchType)
