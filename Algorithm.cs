@@ -11,13 +11,6 @@ namespace Algorithm
     public TimeSpan Duration { get; set; }
   }
   
-  [Obsolete]
-  public enum SearchType
-  {
-    ShortestDuration,
-    LongestDuration
-  }
-
   public class Thing
   {
     public string Moniker { get; set; }
@@ -33,29 +26,10 @@ namespace Algorithm
       _list = list;
     }
 
-    [Obsolete("use strategy overload")]
-    public Pair Find(SearchType searchType)
-    {
-      return Find(MapTypeToComparisonStrategy(searchType));
-    }
-    
     public Pair Find(ISearchStrategy strategy)
     {
       var durations = CalculateDurationsBetweenThings(_list);
       return FindShortestOrLongestDuration(strategy, durations);
-    }
-
-    static ISearchStrategy MapTypeToComparisonStrategy(SearchType searchType)
-    {
-      switch (searchType)
-      {
-        case SearchType.ShortestDuration:
-          return new ShortestDurationStrategy();
-        case SearchType.LongestDuration:
-          return new LongestDurationStrategy();
-        default:
-          throw new ArgumentOutOfRangeException(nameof(searchType), searchType, null);
-      }
     }
 
     static Pair FindShortestOrLongestDuration(ISearchStrategy strategy, IEnumerable<Pair> durations)
