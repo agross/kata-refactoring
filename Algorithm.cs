@@ -41,30 +41,32 @@ namespace Algorithm
         return new Pair();
       }
 
-      return FindShortestOrLongestDuration(searchType, durations);
+      var strategy = MapTypeToComparisonStrategy(searchType);
+      return FindShortestOrLongestDuration(strategy, durations);
     }
 
-    static Pair FindShortestOrLongestDuration(SearchType searchType, IEnumerable<Pair> durdations)
+    static ISearchStrategy MapTypeToComparisonStrategy(SearchType searchType)
     {
-      var answer = durdations.First();
-      foreach (var result in durdations)
+      switch (searchType)
       {
-        switch (searchType)
-        {
-          case SearchType.ShortestDuration:
-            if (result.Duration < answer.Duration)
-            {
-              answer = result;
-            }
-            break;
+        case SearchType.ShortestDuration:
+          return new ShortestDurationStrategy();
+          break;
+        case SearchType.LongestDuration:
+          return new LongestDurationStrategy();
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(nameof(searchType), searchType, null);
+      }
+    }
 
-          case SearchType.LongestDuration:
-            if (result.Duration > answer.Duration)
-            {
-              answer = result;
-            }
-            break;
-        }
+    static Pair FindShortestOrLongestDuration(ISearchStrategy strategy, IEnumerable<Pair> durations)
+    {
+      var answer = durations.First();
+      foreach (var result in durations)
+      {
+        if (strategy.Select(answer, result))
+          answer = result;
       }
       return answer;
     }
@@ -93,5 +95,26 @@ namespace Algorithm
       
       return new Pair {First = right, Second = left};
     }
+  }
+
+  class LongestDurationStrategy : ISearchStrategy
+  {
+    public bool Select(Pair current, Pair candidate)
+    {
+      return candidate.Duration > current.Duration;
+    }
+  }
+
+  class ShortestDurationStrategy : ISearchStrategy
+  {
+    public bool Select(Pair current, Pair candidate)
+    {
+      return candidate.Duration < current.Duration;
+    }
+  }
+
+  interface ISearchStrategy
+  {
+    bool Select(Pair current, Pair candidate);
   }
 }
