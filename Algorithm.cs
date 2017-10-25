@@ -46,7 +46,7 @@ namespace Algorithm
 
     static Pair FindShortestOrLongestDuration(SearchType searchType, IEnumerable<Pair> durdations)
     {
-      Pair answer = durdations.First();
+      var answer = durdations.First();
       foreach (var result in durdations)
       {
         switch (searchType)
@@ -86,18 +86,12 @@ namespace Algorithm
 
     static Pair EarliestFirst(Thing left, Thing right)
     {
-      var pair = new Pair();
       if (left.Date < right.Date)
       {
-        pair.First = left;
-        pair.Second = right;
+        return new Pair {First = left, Second = right};
       }
-      else
-      {
-        pair.First = right;
-        pair.Second = left;
-      }
-      return pair;
+      
+      return new Pair {First = right, Second = left};
     }
   }
 }
