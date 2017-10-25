@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Algorithm
 {  
@@ -70,20 +71,19 @@ namespace Algorithm
       return answer;
     }
 
-    static List<Pair> CalculateDurationsBetweenThings(List<Thing> things)
+    static IEnumerable<Pair> CalculateDurationsBetweenThings(List<Thing> things)
     {
-      var temporaryList = new List<Pair>();
-
-      for (var i = 0; i < things.Count - 1; i++)
+      return things.SelectMany((left, i) =>
       {
-        for (var j = i + 1; j < things.Count; j++)
-        {
-          var pair = EarliestFirst(things[i], things[j]);
-          pair.Duration = pair.Second.Date - pair.First.Date;
-          temporaryList.Add(pair);
-        }
-      }
-      return temporaryList;
+        return things
+          .Skip(i + 1)
+          .Select(right =>
+          {
+            var pair = EarliestFirst(left, right);
+            pair.Duration = pair.Second.Date - pair.First.Date;
+            return pair;
+          });
+      });
     }
 
     static Pair EarliestFirst(Thing left, Thing right)
