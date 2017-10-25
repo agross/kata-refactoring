@@ -25,9 +25,9 @@ namespace Algorithm
 
   public class Finder
   {
-    private readonly List<Thing> _list;
+    readonly IEnumerable<Thing> _list;
 
-    public Finder(List<Thing> list)
+    public Finder(IEnumerable<Thing> list)
     {
       _list = list;
     }
