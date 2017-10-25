@@ -42,12 +42,6 @@ namespace Algorithm
     public Pair Find(ISearchStrategy strategy)
     {
       var durations = CalculateDurationsBetweenThings(_list);
-
-      if(!durations.Any())
-      {
-        return new Pair();
-      }
-
       return FindShortestOrLongestDuration(strategy, durations);
     }
 
@@ -57,10 +51,8 @@ namespace Algorithm
       {
         case SearchType.ShortestDuration:
           return new ShortestDurationStrategy();
-          break;
         case SearchType.LongestDuration:
           return new LongestDurationStrategy();
-          break;
         default:
           throw new ArgumentOutOfRangeException(nameof(searchType), searchType, null);
       }
@@ -68,7 +60,7 @@ namespace Algorithm
 
     static Pair FindShortestOrLongestDuration(ISearchStrategy strategy, IEnumerable<Pair> durations)
     {
-      return durations.Aggregate(durations.First(), strategy.Select);
+      return durations.Aggregate(durations.FirstOrDefault() ?? new Pair(), strategy.Select);
     }
 
     static IEnumerable<Pair> CalculateDurationsBetweenThings(IEnumerable<Thing> things)
