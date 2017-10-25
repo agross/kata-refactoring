@@ -10,10 +10,10 @@ namespace Algorithm
     public TimeSpan Duration { get; set; }
   }
   
-  public enum FT
+  public enum SearchType
   {
-    One,
-    Two
+    ShortestDuration,
+    LongestDuration
   }
 
   public class Thing
@@ -31,7 +31,7 @@ namespace Algorithm
       _list = list;
     }
 
-    public Pair Find(FT ft)
+    public Pair Find(SearchType searchType)
     {
       var temporaryList = new List<Pair>();
 
@@ -63,16 +63,16 @@ namespace Algorithm
       Pair answer = temporaryList[0];
       foreach(var result in temporaryList)
       {
-        switch(ft)
+        switch(searchType)
         {
-          case FT.One:
+          case SearchType.ShortestDuration:
             if(result.Duration < answer.Duration)
             {
               answer = result;
             }
             break;
 
-          case FT.Two:
+          case SearchType.LongestDuration:
             if(result.Duration > answer.Duration)
             {
               answer = result;

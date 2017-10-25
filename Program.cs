@@ -19,12 +19,12 @@ namespace Refactoring_1
 
       var finder = new Finder(things.ToList());
       
-      var f1 = finder.Find(FT.One);
+      var f1 = finder.Find(SearchType.ShortestDuration);
       Console.WriteLine(f1.Duration);
       Console.WriteLine(f1.First.Moniker);
       Console.WriteLine(f1.Second.Moniker);
 
-      var f2 = finder.Find(FT.Two);
+      var f2 = finder.Find(SearchType.LongestDuration);
       Console.WriteLine(f2.Duration);
       Console.WriteLine(f2.First.Moniker);
       Console.WriteLine(f2.Second.Moniker);
