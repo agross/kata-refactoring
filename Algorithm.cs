@@ -62,15 +62,7 @@ namespace Algorithm
 
     static Pair FindShortestOrLongestDuration(ISearchStrategy strategy, IEnumerable<Pair> durations)
     {
-      return durations.Aggregate(durations.First(),
-        (current, candidate) =>
-        {
-          if (strategy.Select(current, candidate))
-          {
-            return candidate;
-          }
-          return current;
-        });
+      return durations.Aggregate(durations.First(), strategy.Select);
     }
 
     static IEnumerable<Pair> CalculateDurationsBetweenThings(IEnumerable<Thing> things)
@@ -101,22 +93,22 @@ namespace Algorithm
 
   class LongestDurationStrategy : ISearchStrategy
   {
-    public bool Select(Pair current, Pair candidate)
+    public Pair Select(Pair current, Pair candidate)
     {
-      return candidate.Duration > current.Duration;
+      return candidate.Duration > current.Duration ? candidate : current;
     }
   }
 
   class ShortestDurationStrategy : ISearchStrategy
   {
-    public bool Select(Pair current, Pair candidate)
+    public Pair Select(Pair current, Pair candidate)
     {
-      return candidate.Duration < current.Duration;
+      return candidate.Duration < current.Duration ? candidate : current;
     }
   }
 
   interface ISearchStrategy
   {
-    bool Select(Pair current, Pair candidate);
+    Pair Select(Pair current, Pair candidate);
   }
 }
