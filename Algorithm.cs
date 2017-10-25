@@ -62,13 +62,15 @@ namespace Algorithm
 
     static Pair FindShortestOrLongestDuration(ISearchStrategy strategy, IEnumerable<Pair> durations)
     {
-      var answer = durations.First();
-      foreach (var result in durations)
-      {
-        if (strategy.Select(answer, result))
-          answer = result;
-      }
-      return answer;
+      return durations.Aggregate(durations.First(),
+        (current, candidate) =>
+        {
+          if (strategy.Select(current, candidate))
+          {
+            return candidate;
+          }
+          return current;
+        });
     }
 
     static IEnumerable<Pair> CalculateDurationsBetweenThings(IEnumerable<Thing> things)
