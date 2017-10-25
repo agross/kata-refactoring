@@ -11,6 +11,7 @@ namespace Algorithm
     public TimeSpan Duration { get; set; }
   }
   
+  [Obsolete]
   public enum SearchType
   {
     ShortestDuration,
@@ -32,7 +33,13 @@ namespace Algorithm
       _list = list;
     }
 
+    [Obsolete("use strategy overload")]
     public Pair Find(SearchType searchType)
+    {
+      return Find(MapTypeToComparisonStrategy(searchType));
+    }
+    
+    public Pair Find(ISearchStrategy strategy)
     {
       var durations = CalculateDurationsBetweenThings(_list);
 
@@ -41,7 +48,6 @@ namespace Algorithm
         return new Pair();
       }
 
-      var strategy = MapTypeToComparisonStrategy(searchType);
       return FindShortestOrLongestDuration(strategy, durations);
     }
 
@@ -107,7 +113,7 @@ namespace Algorithm
     }
   }
 
-  interface ISearchStrategy
+  public interface ISearchStrategy
   {
     Pair Select(Pair current, Pair candidate);
   }

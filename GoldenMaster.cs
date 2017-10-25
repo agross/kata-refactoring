@@ -35,5 +35,21 @@ namespace Refactoring_1
       Assert.Null(result.Second);
       Assert.Equal(TimeSpan.Zero, result.Duration);
     }
+    
+    [Fact]
+    public void Approve_strategy_implementation_works_like_enum()
+    {
+      StringWriter enumOutput = new StringWriter();
+      Console.SetOut(enumOutput);
+      Program.Run();
+      
+      StringWriter strategyOutput = new StringWriter();
+      Console.SetOut(strategyOutput);
+      Program.Run(new ShortestDurationStrategy());
+      Program.Run(new LongestDurationStrategy());
+     
+      
+      Assert.Equal(enumOutput.ToString(), strategyOutput.ToString());
+    }
   }
 }
