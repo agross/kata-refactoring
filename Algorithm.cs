@@ -1,26 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace Algorithm
 {
   public class Kombination
   {
-    public Person Person1 { get; set; }
-    public Person Person2 { get; set; }
+    public Person Person1 { get; }
+    public Person Person2 { get; }
     public TimeSpan Altersunterschied { get; set; }
 
     public Kombination(Person links, Person rechts)
     {
-      if (links.Geburtsdatum < rechts.Geburtsdatum)
-      {
-        Person1 = links;
-        Person2 = rechts;
-        return;
-      }
+      var sortiert = new[] {links, rechts}
+        .OrderBy(x => x.Geburtsdatum);
 
-      Person1 = rechts;
-      Person2 = links;
+      Person1 = sortiert.First();
+      Person2 = sortiert.Last();
     }
   }
 
@@ -102,8 +99,6 @@ namespace Algorithm
       }
       return ergebnis;
     }
-
-
   }
 
   public class Database
