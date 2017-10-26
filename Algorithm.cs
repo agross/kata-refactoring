@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using Algorithm;
+using Xunit;
 
 namespace Algorithm
 {
@@ -44,12 +46,20 @@ namespace Algorithm
       _personen = personen;
     }
 
+    [Obsolete("bitte strategie-überladung nutzen")]
     public void Find(SucheNach sucheNach)
     {
       FindForTesting(sucheNach, (answer) => Database.Save(answer));
     }
 
+    [Obsolete("bitte strategie-überladung nutzen")]
     public void FindForTesting(SucheNach sucheNach, Action<Kombination> databaseAction)
+    {
+      var strategie = MappeSucheNachAufStrategie(sucheNach);
+      FindForTesting(strategie, databaseAction);
+    }
+
+    public void FindForTesting(IchSelektierDasErgebis strategie, Action<Kombination> databaseAction)
     {
       var paare = ErzeugeKombinationen(_personen).ToList();
       if(paare.Count < 1)
@@ -57,8 +67,22 @@ namespace Algorithm
         return;
       }
 
-      var answer = ErmittleErgebnisAnhandFt(sucheNach, paare);
+      var answer = ErmittleErgebnis(strategie, paare);
+
       databaseAction(answer);
+    }
+
+    IchSelektierDasErgebis MappeSucheNachAufStrategie(SucheNach sucheNach)
+    {
+      switch (sucheNach)
+      {
+        case SucheNach.KleinsterAltersunterschied:
+          return new KleinsterAltersunterschied();
+        case SucheNach.GrößterAltersunterschied:
+          return new GrößterAltersunterschied();
+        default:
+          throw new ArgumentOutOfRangeException(nameof(sucheNach), sucheNach, null);
+      }
     }
 
     static IEnumerable<Kombination> ErzeugeKombinationen(IEnumerable<Person> personen)
@@ -71,20 +95,30 @@ namespace Algorithm
       );
     }
 
-    static Kombination ErmittleErgebnisAnhandFt(SucheNach sucheNach, IEnumerable<Kombination> kombinationen)
+    static Kombination ErmittleErgebnis(IchSelektierDasErgebis selektor, IEnumerable<Kombination> kombinationen)
     {
-      var sortiert = kombinationen.OrderBy(x => x.Altersunterschied);
+      return selektor.ErmittleErgebnis(kombinationen);
+    }
 
-      switch (sucheNach)
+    public interface IchSelektierDasErgebis
+    {
+      Kombination ErmittleErgebnis(IEnumerable<Kombination> kombinationen);
+    }
+
+    public class KleinsterAltersunterschied : IchSelektierDasErgebis
+    {
+      public Kombination ErmittleErgebnis(IEnumerable<Kombination> kombinationen)
       {
-        case SucheNach.KleinsterAltersunterschied:
-          return sortiert.First();
-
-        case SucheNach.GrößterAltersunterschied:
-          return sortiert.Last();
+        return kombinationen.OrderBy(x => x.Altersunterschied).First();
       }
+    }
 
-      return kombinationen.First();
+    public class GrößterAltersunterschied : IchSelektierDasErgebis
+    {
+      public Kombination ErmittleErgebnis(IEnumerable<Kombination> kombinationen)
+      {
+        return kombinationen.OrderBy(x => x.Altersunterschied).Last();
+      }
     }
   }
 
@@ -94,5 +128,28 @@ namespace Algorithm
     {
       Console.WriteLine("Saved to database!");
     }
+  }
+}
+
+
+public class KleinsterAltersunterschied
+{
+  [Fact]
+  public void Selektiert_kleinsten_Unterschied()
+  {
+    var personen = new[]
+    {
+      new Kombination(new Person {Name = "Alex", Geburtsdatum = new DateTime(1900, 1, 1)},
+        new Person {Name = "Peter", Geburtsdatum = new DateTime(1902, 1, 1)}),
+      new Kombination(new Person {Name = "Alex", Geburtsdatum = new DateTime(1900, 1, 1)},
+        new Person {Name = "Hanna", Geburtsdatum = new DateTime(1901, 1, 1)})
+    };
+
+    var selektor = new Finder.KleinsterAltersunterschied();
+
+    var ergebis = selektor.ErmittleErgebnis(personen);
+
+    Assert.Equal("Alex", ergebis.Person1.Name);
+    Assert.Equal("Hanna", ergebis.Person2.Name);
   }
 }
