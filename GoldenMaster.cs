@@ -24,7 +24,7 @@ namespace Refactoring_1
 
       var finder = new Finder(things.ToList());
 
-      Paar savedAnswer = null;
+      Kombination savedAnswer = null;
 
       finder.FindForTesting(ft,
         answer =>

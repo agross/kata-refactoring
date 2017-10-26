@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Algorithm
 {
-  public class Paar
+  public class Kombination
   {
     public Person Person1 { get; set; }
     public Person Person2 { get; set; }
@@ -25,11 +25,11 @@ namespace Algorithm
 
   public class Finder
   {
-    private readonly List<Person> _p;
+    private readonly List<Person> _personen;
 
-    public Finder(List<Person> p)
+    public Finder(List<Person> personen)
     {
-      _p = p;
+      _personen = personen;
     }
 
     public void Find(FT ft)
@@ -37,7 +37,7 @@ namespace Algorithm
       FindForTesting(ft, (answer) => Database.Save(answer));
     }
 
-    public void FindForTesting(FT ft, Action<Paar> databaseAction)
+    public void FindForTesting(FT ft, Action<Kombination> databaseAction)
     {
       var paare = To_be_clarified();
       if(paare.Count < 1)
@@ -49,9 +49,9 @@ namespace Algorithm
       databaseAction(answer);
     }
 
-    static Paar ErmittleErgebnisAnhandFt(FT ft, List<Paar> paare)
+    static Kombination ErmittleErgebnisAnhandFt(FT ft, List<Kombination> paare)
     {
-      Paar answer = paare[0];
+      Kombination answer = paare[0];
       foreach (var result in paare)
       {
         switch (ft)
@@ -74,36 +74,44 @@ namespace Algorithm
       return answer;
     }
 
-    List<Paar> To_be_clarified()
+    List<Kombination> To_be_clarified()
     {
-      var tr = new List<Paar>();
+      var ergebnis = new List<Kombination>();
 
-      for (var i = 0; i < _p.Count - 1; i++)
+      for (var i = 0; i < _personen.Count - 1; i++)
       {
-        for (var j = i + 1; j < _p.Count; j++)
+        for (var j = i + 1; j < _personen.Count; j++)
         {
-          var r = new Paar();
-          if (_p[i].Geburtsdatum < _p[j].Geburtsdatum)
-          {
-            r.Person1 = _p[i];
-            r.Person2 = _p[j];
-          }
-          else
-          {
-            r.Person1 = _p[j];
-            r.Person2 = _p[i];
-          }
+          var r = SortiereNachGeburtsdatum(_personen[i], _personen[j]);
           r.Altersunterschied = r.Person2.Geburtsdatum - r.Person1.Geburtsdatum;
-          tr.Add(r);
+          ergebnis.Add(r);
         }
       }
-      return tr;
+      return ergebnis;
+    }
+
+    static Kombination SortiereNachGeburtsdatum(Person links, Person rechts)
+    {
+      if (links.Geburtsdatum < rechts.Geburtsdatum)
+      {
+        return new Kombination
+        {
+          Person1 = links,
+          Person2 = rechts,
+        };
+      }
+
+      return new Kombination
+      {
+        Person1 = rechts,
+        Person2 = links
+      };
     }
   }
 
   public class Database
   {
-    public static void Save(Paar answer)
+    public static void Save(Kombination answer)
     {
       Console.WriteLine("Saved to database!");
     }
