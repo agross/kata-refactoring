@@ -10,9 +10,9 @@ namespace Refactoring_1
   public class GoldenMaster
   {
     [Theory]
-    [InlineData(FT.One, 286, "M", "A")]
-    [InlineData(FT.Two, 19221, "W", "B")]
-    public void Approve_saves_answer_to_database(FT ft, int altersunterschied, string name1, string name2)
+    [InlineData(SucheNach.KleinsterAltersunterschied, 286, "M", "A")]
+    [InlineData(SucheNach.GrößterAltersunterschied, 19221, "W", "B")]
+    public void Approve_saves_answer_to_database(SucheNach sucheNach, int altersunterschied, string name1, string name2)
     {
       var things = new[]
       {
@@ -27,7 +27,7 @@ namespace Refactoring_1
 
       Kombination savedAnswer = null;
 
-      finder.FindForTesting(ft,
+      finder.FindForTesting(sucheNach,
         answer =>
         {
           savedAnswer = answer;
@@ -47,7 +47,7 @@ namespace Refactoring_1
 
       var wasSavedToDatabase = false;
 
-      finder.FindForTesting(FT.One,
+      finder.FindForTesting(SucheNach.KleinsterAltersunterschied,
         _ =>
         {
           wasSavedToDatabase = true;
@@ -74,7 +74,7 @@ namespace Refactoring_1
 
       Kombination savedAnswer = null;
 
-      var timeTaken = Measure.Time(() => finder.FindForTesting(FT.One, answer => { }));
+      var timeTaken = Measure.Time(() => finder.FindForTesting(SucheNach.KleinsterAltersunterschied, answer => { }));
 
       Assert.InRange(timeTaken.TotalSeconds, 0, TimeSpan.FromSeconds(30).TotalSeconds);
     }

@@ -23,10 +23,10 @@ namespace Algorithm
     }
   }
 
-  public enum FT
+  public enum SucheNach
   {
-    One,
-    Two
+    KleinsterAltersunterschied,
+    GrößterAltersunterschied
   }
 
   public class Person
@@ -44,12 +44,12 @@ namespace Algorithm
       _personen = personen;
     }
 
-    public void Find(FT ft)
+    public void Find(SucheNach sucheNach)
     {
-      FindForTesting(ft, (answer) => Database.Save(answer));
+      FindForTesting(sucheNach, (answer) => Database.Save(answer));
     }
 
-    public void FindForTesting(FT ft, Action<Kombination> databaseAction)
+    public void FindForTesting(SucheNach sucheNach, Action<Kombination> databaseAction)
     {
       var paare = ErzeugeKombinationen(_personen).ToList();
       if(paare.Count < 1)
@@ -57,7 +57,7 @@ namespace Algorithm
         return;
       }
 
-      var answer = ErmittleErgebnisAnhandFt(ft, paare);
+      var answer = ErmittleErgebnisAnhandFt(sucheNach, paare);
       databaseAction(answer);
     }
 
@@ -71,29 +71,20 @@ namespace Algorithm
       );
     }
 
-    static Kombination ErmittleErgebnisAnhandFt(FT ft, List<Kombination> paare)
+    static Kombination ErmittleErgebnisAnhandFt(SucheNach sucheNach, IEnumerable<Kombination> kombinationen)
     {
-      Kombination answer = paare[0];
-      foreach (var result in paare)
-      {
-        switch (ft)
-        {
-          case FT.One:
-            if (result.Altersunterschied < answer.Altersunterschied)
-            {
-              answer = result;
-            }
-            break;
+      var sortiert = kombinationen.OrderBy(x => x.Altersunterschied);
 
-          case FT.Two:
-            if (result.Altersunterschied > answer.Altersunterschied)
-            {
-              answer = result;
-            }
-            break;
-        }
+      switch (sucheNach)
+      {
+        case SucheNach.KleinsterAltersunterschied:
+          return sortiert.First();
+
+        case SucheNach.GrößterAltersunterschied:
+          return sortiert.Last();
       }
-      return answer;
+
+      return kombinationen.First();
     }
   }
 

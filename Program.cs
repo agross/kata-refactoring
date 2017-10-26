@@ -19,7 +19,7 @@ namespace Refactoring_1
 
       var finder = new Finder(things.ToList());
 
-finder.Find(FT.One);
+finder.Find(SucheNach.KleinsterAltersunterschied);
     }
   }
 }
