@@ -9,6 +9,19 @@ namespace Algorithm
     public Person Person1 { get; set; }
     public Person Person2 { get; set; }
     public TimeSpan Altersunterschied { get; set; }
+
+    public Kombination(Person links, Person rechts)
+    {
+      if (links.Geburtsdatum < rechts.Geburtsdatum)
+      {
+        Person1 = links;
+        Person2 = rechts;
+        return;
+      }
+
+      Person1 = rechts;
+      Person2 = links;
+    }
   }
 
   public enum FT
@@ -82,7 +95,7 @@ namespace Algorithm
       {
         for (var j = i + 1; j < _personen.Count; j++)
         {
-          var r = SortiereNachGeburtsdatum(_personen[i], _personen[j]);
+          var r = new Kombination(_personen[i], _personen[j]);
           r.Altersunterschied = r.Person2.Geburtsdatum - r.Person1.Geburtsdatum;
           ergebnis.Add(r);
         }
@@ -90,23 +103,7 @@ namespace Algorithm
       return ergebnis;
     }
 
-    static Kombination SortiereNachGeburtsdatum(Person links, Person rechts)
-    {
-      if (links.Geburtsdatum < rechts.Geburtsdatum)
-      {
-        return new Kombination
-        {
-          Person1 = links,
-          Person2 = rechts,
-        };
-      }
 
-      return new Kombination
-      {
-        Person1 = rechts,
-        Person2 = links
-      };
-    }
   }
 
   public class Database
