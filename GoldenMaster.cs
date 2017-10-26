@@ -15,14 +15,18 @@ namespace Refactoring_1
     [InlineData(SucheNach.GrößterAltersunterschied, 19221, "W", "B")]
     public void Approve_saves_answer_to_database(SucheNach sucheNach, int altersunterschied, string name1, string name2)
     {
-      var things = new[]
+      var things = new []
       {
+        New.Person.MitNamen("Alex").GeborenAm(1980, 5, 23),
         new Person {Name = "A", Geburtsdatum = new DateTime(1980, 5, 23)},
         new Person {Name = "B", Geburtsdatum = new DateTime(1991, 4, 27)},
         new Person {Name = "C", Geburtsdatum = new DateTime(1954, 4, 19)},
         new Person {Name = "W", Geburtsdatum = new DateTime(1938, 9, 11)},
-        new Person {Name = "M", Geburtsdatum = new DateTime(1979, 8, 11)}
+        new Person {Name = "M", Geburtsdatum = new DateTime(1979, 8, 11)},
+
       };
+
+
 
       var finder = new Finder(things.ToList());
 
@@ -65,7 +69,7 @@ namespace Refactoring_1
     {
       var things = new[]
       {
-        new Person {Name = "A", Geburtsdatum = new DateTime(1980, 5, 23)},
+        new Person() {Name = "A", Geburtsdatum = new DateTime(1980, 5, 23)},
         new Person {Name = "B", Geburtsdatum = new DateTime(1991, 4, 27)},
         new Person {Name = "C", Geburtsdatum = new DateTime(1954, 4, 19)},
         new Person {Name = "W", Geburtsdatum = new DateTime(1938, 9, 11)},
@@ -92,6 +96,42 @@ namespace Refactoring_1
         timer.Stop();
         return timer.Elapsed;
       }
+    }
+  }
+
+  public static class New
+  {
+    public static PersonBuilder Person => new PersonBuilder();
+  }
+
+  public class PersonBuilder
+  {
+    string _name;
+    DateTime _geburtsdatum;
+
+    public PersonBuilder MitNamen(string name)
+    {
+      _name = name;
+      return this;
+    }
+
+    public PersonBuilder GeborenAm(int jahr, int monat, int tag)
+    {
+      _geburtsdatum = new DateTime(jahr, monat, tag);
+      // _geburtsdatum = new Geburtsdatum(jahr, monat, tag)
+      return this;
+
+    }
+
+    public Person Build()
+    {
+      return new Person(_name, _geburtsdatum);
+      // return new Person {Name = _name, Geburtsdatum = _geburtsdatum};
+    }
+
+    public static implicit operator Person(PersonBuilder self)
+    {
+      return self.Build();
     }
   }
 }

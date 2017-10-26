@@ -31,6 +31,12 @@ namespace Algorithm
 
   public class Person
   {
+    public Person(string name, DateTime geburtsdatum)
+    {
+      Name = name;
+      Geburtsdatum = geburtsdatum;
+    }
+
     public string Name { get; set; }
     public DateTime Geburtsdatum { get; set; }
   }
@@ -50,7 +56,7 @@ namespace Algorithm
       Find(MappeSucheNachAufStrategie(sucheNach),
            new DatabaseAdapter());
     }
-    
+
     public void FindForTesting(SucheNach sucheNach, IDatabase db)
     {
       Find(MappeSucheNachAufStrategie(sucheNach),
