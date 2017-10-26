@@ -39,14 +39,51 @@ namespace Algorithm
 
     public void FindForTesting(FT ft, Action<Paar> databaseAction)
     {
+      var paare = To_be_clarified();
+      if(paare.Count < 1)
+      {
+        return;
+      }
+
+      var answer = ErmittleErgebnisAnhandFt(ft, paare);
+      databaseAction(answer);
+    }
+
+    static Paar ErmittleErgebnisAnhandFt(FT ft, List<Paar> paare)
+    {
+      Paar answer = paare[0];
+      foreach (var result in paare)
+      {
+        switch (ft)
+        {
+          case FT.One:
+            if (result.Altersunterschied < answer.Altersunterschied)
+            {
+              answer = result;
+            }
+            break;
+
+          case FT.Two:
+            if (result.Altersunterschied > answer.Altersunterschied)
+            {
+              answer = result;
+            }
+            break;
+        }
+      }
+      return answer;
+    }
+
+    List<Paar> To_be_clarified()
+    {
       var tr = new List<Paar>();
 
-      for(var i = 0; i < _p.Count - 1; i++)
+      for (var i = 0; i < _p.Count - 1; i++)
       {
-        for(var j = i + 1; j < _p.Count; j++)
+        for (var j = i + 1; j < _p.Count; j++)
         {
           var r = new Paar();
-          if(_p[i].Geburtsdatum < _p[j].Geburtsdatum)
+          if (_p[i].Geburtsdatum < _p[j].Geburtsdatum)
           {
             r.Person1 = _p[i];
             r.Person2 = _p[j];
@@ -60,34 +97,7 @@ namespace Algorithm
           tr.Add(r);
         }
       }
-
-      if(tr.Count < 1)
-      {
-        return;
-      }
-
-      Paar answer = tr[0];
-      foreach(var result in tr)
-      {
-        switch(ft)
-        {
-          case FT.One:
-            if(result.Altersunterschied < answer.Altersunterschied)
-            {
-              answer = result;
-            }
-            break;
-
-          case FT.Two:
-            if(result.Altersunterschied > answer.Altersunterschied)
-            {
-              answer = result;
-            }
-            break;
-        }
-      }
-
-      databaseAction(answer);
+      return tr;
     }
   }
 
