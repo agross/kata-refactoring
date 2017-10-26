@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using Algorithm;
-using Xunit;
 
 namespace Algorithm
 {
@@ -39,9 +37,9 @@ namespace Algorithm
 
   public class Finder
   {
-    private readonly List<Person> _personen;
+    readonly IEnumerable<Person> _personen;
 
-    public Finder(List<Person> personen)
+    public Finder(IEnumerable<Person> personen)
     {
       _personen = personen;
     }
@@ -49,27 +47,27 @@ namespace Algorithm
     [Obsolete("bitte strategie-überladung nutzen")]
     public void Find(SucheNach sucheNach)
     {
-      FindForTesting(sucheNach, (answer) => Database.Save(answer));
+      Find(MappeSucheNachAufStrategie(sucheNach),
+           new DatabaseAdapter());
+    }
+    
+    public void FindForTesting(SucheNach sucheNach, IDatabase db)
+    {
+      Find(MappeSucheNachAufStrategie(sucheNach),
+           db);
     }
 
-    [Obsolete("bitte strategie-überladung nutzen")]
-    public void FindForTesting(SucheNach sucheNach, Action<Kombination> databaseAction)
+    public void Find(IchSelektierDasErgebis strategie, IDatabase database)
     {
-      var strategie = MappeSucheNachAufStrategie(sucheNach);
-      FindForTesting(strategie, databaseAction);
-    }
-
-    public void FindForTesting(IchSelektierDasErgebis strategie, Action<Kombination> databaseAction)
-    {
-      var paare = ErzeugeKombinationen(_personen).ToList();
-      if(paare.Count < 1)
+      var paare = ErzeugeKombinationen(_personen);
+      if(!paare.Any())
       {
         return;
       }
 
       var answer = ErmittleErgebnis(strategie, paare);
 
-      databaseAction(answer);
+      database.Save(answer);
     }
 
     IchSelektierDasErgebis MappeSucheNachAufStrategie(SucheNach sucheNach)
@@ -122,34 +120,24 @@ namespace Algorithm
     }
   }
 
+  public interface IDatabase
+  {
+     void Save(object irgendwas);
+  }
+
+  public class DatabaseAdapter : IDatabase
+  {
+    public void Save(object irgendwas)
+    {
+      Database.Save((Kombination)irgendwas);
+    }
+  }
+
   public class Database
   {
     public static void Save(Kombination answer)
     {
       Console.WriteLine("Saved to database!");
     }
-  }
-}
-
-
-public class KleinsterAltersunterschied
-{
-  [Fact]
-  public void Selektiert_kleinsten_Unterschied()
-  {
-    var personen = new[]
-    {
-      new Kombination(new Person {Name = "Alex", Geburtsdatum = new DateTime(1900, 1, 1)},
-        new Person {Name = "Peter", Geburtsdatum = new DateTime(1902, 1, 1)}),
-      new Kombination(new Person {Name = "Alex", Geburtsdatum = new DateTime(1900, 1, 1)},
-        new Person {Name = "Hanna", Geburtsdatum = new DateTime(1901, 1, 1)})
-    };
-
-    var selektor = new Finder.KleinsterAltersunterschied();
-
-    var ergebis = selektor.ErmittleErgebnis(personen);
-
-    Assert.Equal("Alex", ergebis.Person1.Name);
-    Assert.Equal("Hanna", ergebis.Person2.Name);
   }
 }

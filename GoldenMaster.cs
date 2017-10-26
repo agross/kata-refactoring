@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Algorithm;
+using FakeItEasy;
 using Xunit;
 
 namespace Refactoring_1
@@ -25,17 +26,21 @@ namespace Refactoring_1
 
       var finder = new Finder(things.ToList());
 
+      var database = A.Fake<IDatabase>();
       Kombination savedAnswer = null;
-
-      finder.FindForTesting(sucheNach,
-        answer =>
+      A.CallTo(() => database.Save(A<Kombination>._))
+        .Invokes(call =>
         {
-          savedAnswer = answer;
+          savedAnswer = (Kombination) call.Arguments[0];
         });
+
+      finder.FindForTesting(sucheNach, database);
 
       Assert.Equal(TimeSpan.FromDays(altersunterschied), savedAnswer.Altersunterschied);
       Assert.Equal(name1, savedAnswer.Person1.Name);
       Assert.Equal(name2, savedAnswer.Person2.Name);
+
+      A.CallTo(() => database.Save(A<Kombination>._)).MustHaveHappened();
     }
 
     [Fact]
@@ -47,13 +52,11 @@ namespace Refactoring_1
 
       var wasSavedToDatabase = false;
 
+      var database = A.Fake<IDatabase>();
       finder.FindForTesting(SucheNach.KleinsterAltersunterschied,
-        _ =>
-        {
-          wasSavedToDatabase = true;
-        });
+        database);
 
-      Assert.False(wasSavedToDatabase);
+      A.CallTo(() => database.Save(A<Kombination>._)).MustNotHaveHappened();
     }
 
 
@@ -72,9 +75,7 @@ namespace Refactoring_1
 
       var finder = new Finder(things.ToList());
 
-      Kombination savedAnswer = null;
-
-      var timeTaken = Measure.Time(() => finder.FindForTesting(SucheNach.KleinsterAltersunterschied, answer => { }));
+      var timeTaken = Measure.Time(() => finder.FindForTesting(SucheNach.KleinsterAltersunterschied, A.Fake<IDatabase>()));
 
       Assert.InRange(timeTaken.TotalSeconds, 0, TimeSpan.FromSeconds(30).TotalSeconds);
     }
