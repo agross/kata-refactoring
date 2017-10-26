@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Algorithm
 {
-  public class F
+  public class Paar
   {
-    public Thing P1 { get; set; }
-    public Thing P2 { get; set; }
-    public TimeSpan D { get; set; }
+    public Person Person1 { get; set; }
+    public Person Person2 { get; set; }
+    public TimeSpan Altersunterschied { get; set; }
   }
 
   public enum FT
@@ -17,17 +17,17 @@ namespace Algorithm
     Two
   }
 
-  public class Thing
+  public class Person
   {
-    public string Moniker { get; set; }
-    public DateTime Date { get; set; }
+    public string Name { get; set; }
+    public DateTime Geburtsdatum { get; set; }
   }
 
   public class Finder
   {
-    private readonly List<Thing> _p;
+    private readonly List<Person> _p;
 
-    public Finder(List<Thing> p)
+    public Finder(List<Person> p)
     {
       _p = p;
     }
@@ -37,26 +37,26 @@ namespace Algorithm
       FindForTesting(ft, (answer) => Database.Save(answer));
     }
 
-    public void FindForTesting(FT ft, Action<F> databaseAction)
+    public void FindForTesting(FT ft, Action<Paar> databaseAction)
     {
-      var tr = new List<F>();
+      var tr = new List<Paar>();
 
       for(var i = 0; i < _p.Count - 1; i++)
       {
         for(var j = i + 1; j < _p.Count; j++)
         {
-          var r = new F();
-          if(_p[i].Date < _p[j].Date)
+          var r = new Paar();
+          if(_p[i].Geburtsdatum < _p[j].Geburtsdatum)
           {
-            r.P1 = _p[i];
-            r.P2 = _p[j];
+            r.Person1 = _p[i];
+            r.Person2 = _p[j];
           }
           else
           {
-            r.P1 = _p[j];
-            r.P2 = _p[i];
+            r.Person1 = _p[j];
+            r.Person2 = _p[i];
           }
-          r.D = r.P2.Date - r.P1.Date;
+          r.Altersunterschied = r.Person2.Geburtsdatum - r.Person1.Geburtsdatum;
           tr.Add(r);
         }
       }
@@ -66,20 +66,20 @@ namespace Algorithm
         return;
       }
 
-      F answer = tr[0];
+      Paar answer = tr[0];
       foreach(var result in tr)
       {
         switch(ft)
         {
           case FT.One:
-            if(result.D < answer.D)
+            if(result.Altersunterschied < answer.Altersunterschied)
             {
               answer = result;
             }
             break;
 
           case FT.Two:
-            if(result.D > answer.D)
+            if(result.Altersunterschied > answer.Altersunterschied)
             {
               answer = result;
             }
@@ -93,7 +93,7 @@ namespace Algorithm
 
   public class Database
   {
-    public static void Save(F answer)
+    public static void Save(Paar answer)
     {
       Console.WriteLine("Saved to database!");
     }

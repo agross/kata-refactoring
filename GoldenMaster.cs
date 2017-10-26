@@ -11,20 +11,20 @@ namespace Refactoring_1
     [Theory]
     [InlineData(FT.One, 286, "M", "A")]
     [InlineData(FT.Two, 19221, "W", "B")]
-    public void Approve_saves_answer_to_database(FT ft, int d, string p1Moniker, string p2Moniker)
+    public void Approve_saves_answer_to_database(FT ft, int altersunterschied, string name1, string name2)
     {
       var things = new[]
       {
-        new Thing {Moniker = "A", Date = new DateTime(1980, 5, 23)},
-        new Thing {Moniker = "B", Date = new DateTime(1991, 4, 27)},
-        new Thing {Moniker = "C", Date = new DateTime(1954, 4, 19)},
-        new Thing {Moniker = "W", Date = new DateTime(1938, 9, 11)},
-        new Thing {Moniker = "M", Date = new DateTime(1979, 8, 11)}
+        new Person {Name = "A", Geburtsdatum = new DateTime(1980, 5, 23)},
+        new Person {Name = "B", Geburtsdatum = new DateTime(1991, 4, 27)},
+        new Person {Name = "C", Geburtsdatum = new DateTime(1954, 4, 19)},
+        new Person {Name = "W", Geburtsdatum = new DateTime(1938, 9, 11)},
+        new Person {Name = "M", Geburtsdatum = new DateTime(1979, 8, 11)}
       };
 
       var finder = new Finder(things.ToList());
 
-      F savedAnswer = null;
+      Paar savedAnswer = null;
 
       finder.FindForTesting(ft,
         answer =>
@@ -32,15 +32,15 @@ namespace Refactoring_1
           savedAnswer = answer;
         });
 
-      Assert.Equal(TimeSpan.FromDays(d), savedAnswer.D);
-      Assert.Equal(p1Moniker, savedAnswer.P1.Moniker);
-      Assert.Equal(p2Moniker, savedAnswer.P2.Moniker);
+      Assert.Equal(TimeSpan.FromDays(altersunterschied), savedAnswer.Altersunterschied);
+      Assert.Equal(name1, savedAnswer.Person1.Name);
+      Assert.Equal(name2, savedAnswer.Person2.Name);
     }
 
     [Fact]
-    public void Approve_does_not_save_to_database_with_empty_thing_list()
+    public void Approve_does_not_save_to_database_with_empty_person_list()
     {
-      var things = new List<Thing>();
+      var things = new List<Person>();
 
       var finder = new Finder(things.ToList());
 
