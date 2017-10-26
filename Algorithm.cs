@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Algorithm
-{  
+{
   public class F
   {
     public Thing P1 { get; set; }
     public Thing P2 { get; set; }
     public TimeSpan D { get; set; }
   }
-  
+
   public enum FT
   {
     One,
@@ -31,7 +32,12 @@ namespace Algorithm
       _p = p;
     }
 
-    public F Find(FT ft)
+    public void Find(FT ft)
+    {
+      FindForTesting(ft, (answer) => Database.Save(answer));
+    }
+
+    public void FindForTesting(FT ft, Action<F> databaseAction)
     {
       var tr = new List<F>();
 
@@ -57,7 +63,7 @@ namespace Algorithm
 
       if(tr.Count < 1)
       {
-        return new F();
+        return;
       }
 
       F answer = tr[0];
@@ -81,7 +87,15 @@ namespace Algorithm
         }
       }
 
-      return answer;
+      databaseAction(answer);
+    }
+  }
+
+  public class Database
+  {
+    public static void Save(F answer)
+    {
+      Console.WriteLine("Saved to database!");
     }
   }
 }
