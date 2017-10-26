@@ -9,7 +9,7 @@ namespace Algorithm
   {
     public Person Person1 { get; }
     public Person Person2 { get; }
-    public TimeSpan Altersunterschied { get; set; }
+    public TimeSpan Altersunterschied { get; }
 
     public Kombination(Person links, Person rechts)
     {
@@ -18,6 +18,8 @@ namespace Algorithm
 
       Person1 = sortiert.First();
       Person2 = sortiert.Last();
+
+      Altersunterschied = Person2.Geburtsdatum - Person1.Geburtsdatum;
     }
   }
 
@@ -93,7 +95,6 @@ namespace Algorithm
         for (var j = i + 1; j < _personen.Count; j++)
         {
           var r = new Kombination(_personen[i], _personen[j]);
-          r.Altersunterschied = r.Person2.Geburtsdatum - r.Person1.Geburtsdatum;
           ergebnis.Add(r);
         }
       }
