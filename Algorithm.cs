@@ -51,7 +51,7 @@ namespace Algorithm
 
     public void FindForTesting(FT ft, Action<Kombination> databaseAction)
     {
-      var paare = To_be_clarified();
+      var paare = To_be_clarified().ToList();
       if(paare.Count < 1)
       {
         return;
@@ -86,19 +86,14 @@ namespace Algorithm
       return answer;
     }
 
-    List<Kombination> To_be_clarified()
+    IEnumerable<Kombination> To_be_clarified()
     {
-      var ergebnis = new List<Kombination>();
-
-      for (var i = 0; i < _personen.Count - 1; i++)
-      {
-        for (var j = i + 1; j < _personen.Count; j++)
+      return _personen.SelectMany((person1, index) =>
         {
-          var r = new Kombination(_personen[i], _personen[j]);
-          ergebnis.Add(r);
+          return _personen.Skip(index + 1)
+            .Select(person2 => new Kombination(person1, person2));
         }
-      }
-      return ergebnis;
+      );
     }
   }
 
