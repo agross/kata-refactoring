@@ -51,7 +51,7 @@ namespace Algorithm
 
     public void FindForTesting(FT ft, Action<Kombination> databaseAction)
     {
-      var paare = To_be_clarified().ToList();
+      var paare = ErzeugeKombinationen(_personen).ToList();
       if(paare.Count < 1)
       {
         return;
@@ -59,6 +59,16 @@ namespace Algorithm
 
       var answer = ErmittleErgebnisAnhandFt(ft, paare);
       databaseAction(answer);
+    }
+
+    static IEnumerable<Kombination> ErzeugeKombinationen(IEnumerable<Person> personen)
+    {
+      return personen.SelectMany((person1, index) =>
+        {
+          return personen.Skip(index + 1)
+            .Select(person2 => new Kombination(person1, person2));
+        }
+      );
     }
 
     static Kombination ErmittleErgebnisAnhandFt(FT ft, List<Kombination> paare)
@@ -84,16 +94,6 @@ namespace Algorithm
         }
       }
       return answer;
-    }
-
-    IEnumerable<Kombination> To_be_clarified()
-    {
-      return _personen.SelectMany((person1, index) =>
-        {
-          return _personen.Skip(index + 1)
-            .Select(person2 => new Kombination(person1, person2));
-        }
-      );
     }
   }
 
