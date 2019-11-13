@@ -41,7 +41,7 @@ namespace Refactoring_1
       var things = CreateTestData();
 
       var finder = new Finder(things.ToList());
-      
+
       var result = finder.Find(strategy);
       Console.WriteLine(result.Duration);
       Console.WriteLine(result.First.Moniker);

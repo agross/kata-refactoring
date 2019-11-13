@@ -15,12 +15,12 @@ namespace Refactoring_1
     {
       Console.SetOut(_output);
     }
-    
+
     [Fact]
     public void Approve_implemenation()
     {
       Program.Run();
-      
+
       Assert.Equal("286.00:00:00\nM\nA\n19221.00:00:00\nW\nB\n", _output.ToString());
     }
 
@@ -35,20 +35,20 @@ namespace Refactoring_1
       Assert.Null(result.Second);
       Assert.Equal(TimeSpan.Zero, result.Duration);
     }
-    
+
     [Fact]
     public void Approve_strategy_implementation_works_like_enum()
     {
       StringWriter enumOutput = new StringWriter();
       Console.SetOut(enumOutput);
       Program.Run();
-      
+
       StringWriter strategyOutput = new StringWriter();
       Console.SetOut(strategyOutput);
       Program.Run(new ShortestDurationStrategy());
       Program.Run(new LongestDurationStrategy());
-     
-      
+
+
       Assert.Equal(enumOutput.ToString(), strategyOutput.ToString());
     }
   }

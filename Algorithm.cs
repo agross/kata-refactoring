@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Algorithm
-{  
+{
   public class Pair
   {
     public Thing First { get; set; }
     public Thing Second { get; set; }
     public TimeSpan Duration { get; set; }
   }
-  
+
   public class Thing
   {
     public string Moniker { get; set; }
@@ -58,7 +58,7 @@ namespace Algorithm
       {
         return new Pair {First = left, Second = right};
       }
-      
+
       return new Pair {First = right, Second = left};
     }
   }
