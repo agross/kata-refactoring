@@ -51,24 +51,32 @@ namespace Algorithm
       {
         for (var j = i + 1; j < _things.Count; j++)
         {
-          var r = new Pair();
-          if (_things[i].Date < _things[j].Date)
-          {
-            r.P1 = _things[i];
-            r.P2 = _things[j];
-          }
-          else
-          {
-            r.P1 = _things[j];
-            r.P2 = _things[i];
-          }
-
-          r.Duration = r.P2.Date - r.P1.Date;
-          pairs.Add(r);
+          var pair = CreatePairFromTwoThings(_things[i],
+            _things[j]);
+          
+          pairs.Add(pair);
         }
       }
 
       return pairs;
+    }
+
+    static Pair CreatePairFromTwoThings(Thing left, Thing right)
+    {
+      var r = new Pair();
+      if (left.Date < right.Date)
+      {
+        r.P1 = left;
+        r.P2 = right;
+      }
+      else
+      {
+        r.P1 = right;
+        r.P2 = left;
+      }
+
+      r.Duration = r.P2.Date - r.P1.Date;
+      return r;
     }
 
     static Pair GetAnswer(FT ft, List<Pair> pairs)
