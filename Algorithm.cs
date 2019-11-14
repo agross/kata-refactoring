@@ -53,7 +53,7 @@ namespace Algorithm
         {
           var pair = CreatePairFromTwoThings(_things[i],
             _things[j]);
-          
+
           pairs.Add(pair);
         }
       }
@@ -64,19 +64,23 @@ namespace Algorithm
     static Pair CreatePairFromTwoThings(Thing left, Thing right)
     {
       var r = new Pair();
-      if (left.Date < right.Date)
-      {
-        r.P1 = left;
-        r.P2 = right;
-      }
-      else
-      {
-        r.P1 = right;
-        r.P2 = left;
-      }
+      var (oldest, newest) = OldestFirst(left, right);
 
+      r.P1 = oldest;
+      r.P2 = newest;
+      
       r.Duration = r.P2.Date - r.P1.Date;
       return r;
+    }
+
+    static (Thing, Thing) OldestFirst(Thing left, Thing right)
+    {
+      if (left.Date < right.Date)
+      {
+        return (left, right);
+      }
+
+      return (right, left);
     }
 
     static Pair GetAnswer(FT ft, List<Pair> pairs)
