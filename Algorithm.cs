@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 
 namespace Algorithm
-{  
-  public class F
+{
+  public class Pair
   {
     public Thing P1 { get; set; }
     public Thing P2 { get; set; }
-    public TimeSpan D { get; set; }
+    public TimeSpan Duration { get; set; }
   }
-  
+
   public enum FT
   {
     One,
@@ -24,56 +24,56 @@ namespace Algorithm
 
   public class Finder
   {
-    private readonly List<Thing> _p;
+    private readonly List<Thing> _things;
 
-    public Finder(List<Thing> p)
+    public Finder(List<Thing> things)
     {
-      _p = p;
+      _things = things;
     }
 
-    public F Find(FT ft)
+    public Pair Find(FT ft)
     {
-      var tr = new List<F>();
+      var pairs = new List<Pair>();
 
-      for(var i = 0; i < _p.Count - 1; i++)
+      for(var i = 0; i < _things.Count - 1; i++)
       {
-        for(var j = i + 1; j < _p.Count; j++)
+        for(var j = i + 1; j < _things.Count; j++)
         {
-          var r = new F();
-          if(_p[i].Date < _p[j].Date)
+          var r = new Pair();
+          if(_things[i].Date < _things[j].Date)
           {
-            r.P1 = _p[i];
-            r.P2 = _p[j];
+            r.P1 = _things[i];
+            r.P2 = _things[j];
           }
           else
           {
-            r.P1 = _p[j];
-            r.P2 = _p[i];
+            r.P1 = _things[j];
+            r.P2 = _things[i];
           }
-          r.D = r.P2.Date - r.P1.Date;
-          tr.Add(r);
+          r.Duration = r.P2.Date - r.P1.Date;
+          pairs.Add(r);
         }
       }
 
-      if(tr.Count < 1)
+      if(pairs.Count < 1)
       {
-        return new F();
+        return new Pair();
       }
 
-      F answer = tr[0];
-      foreach(var result in tr)
+      Pair answer = pairs[0];
+      foreach(var result in pairs)
       {
         switch(ft)
         {
           case FT.One:
-            if(result.D < answer.D)
+            if(result.Duration < answer.Duration)
             {
               answer = result;
             }
             break;
 
           case FT.Two:
-            if(result.D > answer.D)
+            if(result.Duration > answer.Duration)
             {
               answer = result;
             }
