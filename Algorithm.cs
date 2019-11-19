@@ -63,14 +63,14 @@ namespace Algorithm
 
     static Pair CreatePairFromTwoThings(Thing left, Thing right)
     {
-      var r = new Pair();
       var (oldest, newest) = OldestFirst(left, right);
 
-      r.P1 = oldest;
-      r.P2 = newest;
-      
-      r.Duration = r.P2.Date - r.P1.Date;
-      return r;
+      return new Pair
+      {
+        P1 = oldest,
+        P2 = newest,
+        Duration = newest.Date - oldest.Date
+      };
     }
 
     static (Thing, Thing) OldestFirst(Thing left, Thing right)
